@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hyper Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#04050c;--panel:#0a0f2e;--card:#121a47;--line:#27307a;--ink:#fff;--mute:#c9cdf5;--lp:#C4B5FD;--pk:#F9A8D4;--dp:#2a1552;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);font-family:'Sora',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink)}
+[hidden]{display:none!important}
+.wrap{max-width:980px;margin:0 auto;padding:16px 14px 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+h1{font-size:20px;margin:0}
+h1 span{color:var(--lp)}
+.btn{border:0;border-radius:10px;padding:11px 16px;font:700 13px 'Sora',sans-serif;cursor:pointer;color:#000;background:var(--lp);box-shadow:0 3px 0 #6f5fc0;transition:transform .12s}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #6f5fc0}
+.btn.pk{background:var(--pk);box-shadow:0 3px 0 #b86a95}
+.btn.gh{background:transparent;color:#fff;border:1px solid var(--line);box-shadow:none}
+.btn:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px}
+.login{max-width:380px;margin:12vh auto 0;padding:24px;display:flex;flex-direction:column;gap:14px}
+input,select{width:100%;height:46px;background:#04050c;border:1px solid var(--line);border-radius:10px;padding:0 14px;color:#fff;font:600 14px 'Sora',sans-serif}
+label{font-size:12px;display:block;margin-bottom:6px}
+.note{font-size:12px;color:var(--mute);line-height:1.5}
+.banner{padding:10px 14px;border-radius:10px;background:var(--dp);border:1px solid var(--pk);font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.stat{padding:14px 16px;border-left:4px solid var(--lp)}
+.stat:nth-child(even){border-left-color:var(--pk)}
+.stat small{display:block;font-size:12px;color:var(--mute);margin-bottom:6px}
+.stat b{font-size:24px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--panel);color:#fff;border-radius:999px;padding:9px 14px;font:600 13px 'Sora',sans-serif;cursor:pointer}
+.tab.on{background:var(--lp);color:#000;border-color:var(--lp)}
+.bar input{flex:1;min-width:200px}
+.list{display:flex;flex-direction:column;gap:10px}
+.req{padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;animation:in .35s ease both}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.req h3{margin:0 0 4px;font-size:15px}
+.meta{font-size:12px;color:var(--mute);display:flex;flex-wrap:wrap;gap:4px 14px}
+.addr{font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all;margin-top:8px;padding:8px 10px;background:#04050c;border-radius:8px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.addr button{flex:none;font-size:11px;padding:6px 10px}
+.amt{text-align:right}
+.amt b{font-size:20px;display:block}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;margin-top:6px}
+.pill.pending{background:var(--lp);color:#000}.pill.approved{background:#fff;color:#000}.pill.rejected{background:var(--pk);color:#000}
+.acts{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
+.empty{padding:40px 16px;text-align:center;color:var(--mute);font-size:14px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:16px;z-index:5}
+.modal .card{width:100%;max-width:400px;padding:20px;display:flex;flex-direction:column;gap:14px;background:var(--panel)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,10px);background:#000;border:1px solid var(--lp);padding:10px 18px;border-radius:20px;font-size:13px;opacity:0;transition:.2s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media(max-width:560px){.req{grid-template-columns:1fr}.amt{text-align:left}}
+@media(prefers-reduced-motion:reduce){.req{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section id="login" class="card login">
+    <h1>Hyper <span>Admin</span></h1>
+    <div><label for="tok">Admin password</label><input id="tok" type="password" autocomplete="current-password"></div>
+    <button class="btn" id="go">Sign in</button>
+    <p class="note" id="lnote"></p>
+  </section>
+
+  <section id="app" hidden>
+    <header><h1>Hyper <span>Admin</span> · Withdrawals</h1><div style="display:flex;gap:8px"><button class="btn gh" id="refresh">Refresh</button><button class="btn gh" id="out">Sign out</button></div></header>
+    <div class="stats" id="stats"></div>
+    <div class="bar"><div class="tabs" id="tabs"></div><input id="q" placeholder="Search user, address or ID" aria-label="Search"></div>
+    <div class="list" id="list"></div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var API=location.pathname.replace(/\/+$/,'')==='/hyper'?location.origin:'';  // live only when served at /hyper by your server
+var token='',reqs=[],tab='pending';
+var $=function(i){return document.getElementById(i)};
+function toast(t){var e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(function(){e.classList.remove('on')},1700)}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function api(path,opt){opt=opt||{};opt.headers=Object.assign({'Content-Type':'application/json',Authorization:'Bearer '+token},opt.headers||{});
+ return fetch(API+path,opt).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})}
+function load(){if(!API){render();return Promise.resolve()}
+ return api('/hyper/api/withdrawals').then(function(d){reqs=d;render()}).catch(function(){toast('Could not load requests')})}
+function render(){
+ var P=reqs.filter(function(r){return r.status==='pending'}),A=reqs.filter(function(r){return r.status==='approved'}),X=reqs.filter(function(r){return r.status==='rejected'});
+ var sum=P.reduce(function(a,r){return a+r.amount},0);
+ $('stats').innerHTML=[['Pending',P.length],['Pending total',sum.toFixed(2)],['Approved',A.length],['Rejected',X.length]].map(function(s){return '<div class="card stat"><small>'+s[0]+'</small><b>'+s[1]+'</b></div>'}).join('');
+ $('tabs').innerHTML=[['pending','Pending'],['approved','Approved'],['rejected','Rejected'],['all','All']].map(function(t){return '<button class="tab'+(tab===t[0]?' on':'')+'" data-t="'+t[0]+'">'+t[1]+'</button>'}).join('');
+ document.querySelectorAll('.tab').forEach(function(b){b.onclick=function(){tab=b.dataset.t;render()}});
+ var q=$('q').value.trim().toLowerCase();
+ var L=reqs.filter(function(r){return (tab==='all'||r.status===tab)&&(!q||(r.user+r.uid+r.addr+r.id+r.coin).toLowerCase().indexOf(q)>-1)}).sort(function(a,b){return b.ts-a.ts});
+ $('list').innerHTML=L.length?L.map(function(r){return '<article class="card req"><div><h3>'+esc(r.coin)+' · '+esc(r.user)+'</h3><div class="meta"><span>ID '+esc(r.id)+'</span><span>User '+esc(r.uid)+'</span><span>'+new Date(r.ts).toLocaleString()+'</span></div><div class="addr"><span>'+esc(r.addr)+'</span><button class="btn gh" data-c="'+esc(r.addr)+'">Copy</button></div>'+(r.note?'<div class="meta" style="margin-top:8px">Note: '+esc(r.note)+'</div>':'')+'</div><div class="amt"><b>'+Number(r.amount).toFixed(2)+'</b><span class="pill '+r.status+'">'+r.status+'</span></div>'+(r.status==='pending'?'<div class="acts"><button class="btn" data-a="'+esc(r.id)+'">Approve</button><button class="btn pk" data-r="'+esc(r.id)+'">Reject</button></div>':'')+'</article>'}).join(''):'<div class="card empty">No requests here</div>';
+ document.querySelectorAll('[data-c]').forEach(function(b){b.onclick=function(){try{navigator.clipboard.writeText(b.dataset.c).then(function(){toast('Address copied')})}catch(e){toast('Copy failed')}}});
+ document.querySelectorAll('[data-a]').forEach(function(b){b.onclick=function(){decide(b.dataset.a,'approved')}});
+ document.querySelectorAll('[data-r]').forEach(function(b){b.onclick=function(){decide(b.dataset.r,'rejected')}})}
+function decide(id,st){var ap=st==='approved',m=document.createElement('div');m.className='modal';
+ m.innerHTML='<div class="card" role="dialog" aria-modal="true"><h1 style="font-size:17px">'+(ap?'Approve':'Reject')+' '+esc(id)+'?</h1><div><label for="nt">'+(ap?'Transaction ID (optional)':'Reason (shown to the user)')+'</label><input id="nt"></div><p class="note">'+(ap?'Send the payout first, then approve. Approving marks it as paid.':'Rejecting should return the coins to the user\u2019s balance on your server.')+'</p><div style="display:flex;gap:8px"><button class="btn'+(ap?'':' pk')+'" id="ok">Confirm</button><button class="btn gh" id="no">Cancel</button></div></div>';
+ document.body.appendChild(m);$('nt').focus();
+ $('no').onclick=function(){m.remove()};
+ $('ok').onclick=function(){var note=$('nt').value.trim();
+  function done(){var r=reqs.filter(function(x){return x.id===id})[0];r.status=st;if(note)r.note=note;m.remove();render();toast(ap?'Marked as approved':'Rejected')}
+  if(!API)return done();
+  api('/hyper/api/withdrawals/'+encodeURIComponent(id),{method:'PATCH',body:JSON.stringify({status:st,note:note})}).then(done).catch(function(){toast('Update failed')})}}
+function enter(){$('login').hidden=true;$('app').hidden=false;load()}
+$('go').onclick=function(){token=$('tok').value;
+ if(!API)return enter();
+ api('/hyper/api/withdrawals').then(function(d){reqs=d;enter()}).catch(function(){toast('Wrong password or server error')})};
+$('tok').onkeydown=function(e){if(e.key==='Enter')$('go').click()};
+$('refresh').onclick=function(){load().then(function(){toast('Refreshed')})};
+$('out').onclick=function(){token='';reqs=[];$('app').hidden=true;$('login').hidden=false;$('tok').value=''};
+$('q').oninput=render;
+$('lnote').textContent=API?'Access is checked by your server.':'Preview mode: not connected to a server, so there are no requests to show.';
+</script>
+</body>
+</html>
